@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { AuthProvider } from './contexts/AuthContext';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { Container, CssBaseline, Box } from '@mui/material';
@@ -36,28 +36,51 @@ const App = () => {
       <CssBaseline />
       <AuthProvider>
         <Router>
-          <Box display="flex" flexDirection="column" minHeight="100vh">
+          <Box 
+            sx={{ 
+              display: 'flex', 
+              flexDirection: 'column', 
+              minHeight: '100vh' 
+            }}
+          >
             <Header />
-            <Container component="main" sx={{ mt: 4, mb: 4, flex: 1 }}>
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/admin" element={<AdminDashboard />} />
-                <Route path="/admin/tests" element={<TestManager />} />
-                <Route path="/admin/users" element={<UserManager />} />
-                <Route path="/admin/mcq" element={<MCQManager />} />
-                <Route path="/admin/coding" element={<CodingChallengeManager />} />
-                <Route path="/login" element={<Login />} />
+            <Box 
+              component="main" 
+              sx={{ 
+                flexGrow: 1,
+                pt: '64px', // Height of the fixed header
+                pb: '64px', // Height of the footer
+                minHeight: 'calc(100vh - 128px)', // Viewport height minus header and footer
+                backgroundColor: '#f5f5f5' // Optional: adds a subtle background color
+              }}
+            >
+              <Container 
+                maxWidth="lg" 
+                sx={{ 
+                  py: 4 // Adds vertical padding to the container
+                }}
+              >
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/admin" element={<AdminDashboard />} />
+                  <Route path="/admin/tests" element={<TestManager />} />
+                  <Route path="/admin/users" element={<UserManager />} />
+                  <Route path="/admin/mcq" element={<MCQManager />} />
+                  <Route path="/admin/coding" element={<CodingChallengeManager />} />
+                  <Route path="/login" element={<Login />} />
              
-                <Route path="/mcq" element={<MCQSection hackathonId="dummy-id" mcqs={[]} />} />
-                <Route path="/coding" element={<CodingChallengeSection hackathonId="dummy-id" challenges={[]} />} />
-                <Route path="/test" element={<TestPage />} />
-                <Route path="/tests" element={<TestPage />} />
-                <Route path="/test/:testId" element={<TestDetailsPage />} />
-                <Route path="/proctoring" element={<Proctoring />} />
-                <Route path="/online-proctoring" element={<OnlineProctoring />} />
-                <Route path="/profile" element={<UserDetailsForm />} />
-              </Routes>
-            </Container>
+                  <Route path="/mcq" element={<MCQSection hackathonId="dummy-id" mcqs={[]} />} />
+                  <Route path="/coding" element={<CodingChallengeSection hackathonId="dummy-id" challenges={[]} />} />
+                  <Route path="/test" element={<TestPage />} />
+                  <Route path="/tests" element={<TestDetailsPage />} />
+                  <Route path="/test/:testId" element={<TestPage />} />
+                  <Route path="/test/:testId/start" element={<TestPage />} />
+                  <Route path="/proctoring" element={<Proctoring />} />
+                  <Route path="/online-proctoring" element={<OnlineProctoring />} />
+                  <Route path="/profile" element={<UserDetailsForm />} />
+                </Routes>
+              </Container>
+            </Box>
             <Footer />
           </Box>
         </Router>

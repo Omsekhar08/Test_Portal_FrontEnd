@@ -1,134 +1,221 @@
 import React from 'react';
-import { Typography, Button, Grid, Box, Container, Paper, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
-import { styled } from '@mui/system';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import MonitorIcon from '@mui/icons-material/Monitor';
-import AnalyticsIcon from '@mui/icons-material/Analytics';
-import SecurityIcon from '@mui/icons-material/Security';
+import { Typography, Button, Grid, Box, Container } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import CreateIcon from '@mui/icons-material/Create';
+import MonitorIcon from '@mui/icons-material/Monitor';
+import GradingIcon from '@mui/icons-material/Grading';
+import ScheduleIcon from '@mui/icons-material/Schedule';
+import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import LockIcon from '@mui/icons-material/Lock';
+import SecurityIcon from '@mui/icons-material/Security';
+import HomeIcon from '@mui/icons-material/Home';
+import VpnKeyIcon from '@mui/icons-material/VpnKey';
+import VideocamIcon from '@mui/icons-material/Videocam';
+import BackupIcon from '@mui/icons-material/Backup';
 
-const HeroSection = styled('div')({
-  backgroundColor: '#004d40',
+const GradientButton = styled(Button)(({ theme }) => ({
+  background: 'linear-gradient(45deg, #18F349 30%, #04A8BF 90%)',
+  border: 0,
+  borderRadius: 3,
+  boxShadow: '0 3px 5px 2px rgba(4, 168, 191, .3)',
   color: 'white',
-  padding: '80px 0',
-});
+  padding: '10px 30px',
+  '&:hover': {
+    background: 'linear-gradient(45deg, #04A8BF 30%, #18F349 90%)',
+  }
+}));
 
-const FeatureIcon = styled('div')({
-  width: '64px',
-  height: '64px',
-  borderRadius: '50%',
+const FeatureCard = styled(Box)(({ theme }) => ({
+  padding: theme.spacing(4),
+  textAlign: 'center',
+  height: '100%',
   display: 'flex',
+  flexDirection: 'column',
   alignItems: 'center',
-  justifyContent: 'center',
-  marginBottom: '16px',
-  backgroundColor: '#e0f2f1',
-  color: '#004d40',
-});
+  backgroundColor: 'rgba(255, 255, 255, 0.05)',
+  borderRadius: '15px',
+  border: '1px solid rgba(255, 255, 255, 0.1)',
+  transition: 'transform 0.3s ease-in-out',
+  '&:hover': {
+    transform: 'translateY(-5px)',
+    boxShadow: '0 5px 15px rgba(0,0,0,0.3)',
+  }
+}));
 
 const Home = () => {
-  const features = [
-    { title: 'Create', icon: <CreateIcon />, description: 'Create exams in minutes' },
-    { title: 'Monitor', icon: <MonitorIcon />, description: 'Live exam monitoring' },
-    { title: 'Analyze', icon: <AnalyticsIcon />, description: 'Detailed analytics and reports' },
-    { title: 'Secure', icon: <SecurityIcon />, description: 'Advanced security features' },
+  const vendorFeatures = [
+    {
+      icon: <CreateIcon sx={{ fontSize: 40, color: '#18F349' }} />,
+      title: "Custom exam Creation",
+      description: "Vendors can create exams with customizable question formats, including multiple-choice, essay, and drag-and-drop."
+    },
+    {
+      icon: <MonitorIcon sx={{ fontSize: 40, color: '#18F349' }} />,
+      title: "AI-Powered Procturing",
+      description: "Real-time monitoring using AI algorithms to detect suspicious behavior and ensure exam integrity."
+    },
+    {
+      icon: <GradingIcon sx={{ fontSize: 40, color: '#18F349' }} />,
+      title: "Automated Grading",
+      description: "Automatic grading of multiple-choice and objective-type questions with immediate result generation."
+    },
+    {
+      icon: <ScheduleIcon sx={{ fontSize: 40, color: '#18F349' }} />,
+      title: "Exam Scheduling",
+      description: "Vendors can schedule exams, set time limits, and automate reminders for upcoming exams."
+    },
+    {
+      icon: <WorkspacePremiumIcon sx={{ fontSize: 40, color: '#18F349' }} />,
+      title: "Instant certification",
+      description: "Automatically issue certificates to candidates upon successful completion of the exam."
+    },
+    {
+      icon: <DashboardIcon sx={{ fontSize: 40, color: '#18F349' }} />,
+      title: "Vendor dashboard",
+      description: "A comprehensive dashboard that provides an overview of all exams, candidates, and performance metrics."
+    }
+  ];
+
+  const securityFeatures = [
+    {
+      icon: <LockIcon sx={{ fontSize: 40, color: '#18F349' }} />,
+      title: "Secure Browser Mode",
+      description: "Exams are conducted in a secure environment, restricting candidates from accessing unauthorized websites or applications."
+    },
+    {
+      icon: <SecurityIcon sx={{ fontSize: 40, color: '#18F349' }} />,
+      title: "End-to-End Encryption",
+      description: "All data, from exam papers to candidate information, is fully encrypted to protect sensitive information."
+    },
+    {
+      icon: <HomeIcon sx={{ fontSize: 40, color: '#18F349' }} />,
+      title: "Session Lockdown",
+      description: "Prevent candidates from exiting the exam window or switching tabs during an active session."
+    },
+    {
+      icon: <VpnKeyIcon sx={{ fontSize: 40, color: '#18F349' }} />,
+      title: "Two-Factor Authentication",
+      description: "Add an extra layer of security with 2FA, ensuring only authorized users can access exams."
+    },
+    {
+      icon: <VideocamIcon sx={{ fontSize: 40, color: '#18F349' }} />,
+      title: "Live Proctor Monitoring",
+      description: "Real-time monitoring and recording of exam sessions to prevent malpractice."
+    },
+    {
+      icon: <BackupIcon sx={{ fontSize: 40, color: '#18F349' }} />,
+      title: "Data Backup",
+      description: "We securely back up all exam data to ensure that nothing is lost, even in the case of unexpected disruptions."
+    }
   ];
 
   return (
     <>
-      <HeroSection>
-        <Container maxWidth="lg">
-          <Grid container spacing={4} alignItems="center">
-            <Grid item xs={12} md={6}>
-              <Typography variant="h2" gutterBottom>
-                The Ultimate Online Exam Platform
-              </Typography>
-              <Typography variant="h5" paragraph>
-                Create, monitor, and analyze tests with ease. Trusted by 2.5M+ users worldwide.
-              </Typography>
-              <Button variant="contained" color="secondary" size="large">
-                Start Free Trial
-              </Button>
-              <Typography variant="body2" sx={{ mt: 2 }}>
-                No credit card required
-              </Typography>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              {/* Add an image or illustration of the platform here */}
-            </Grid>
-          </Grid>
-        </Container>
-      </HeroSection>
+      {/* Hero Section */}
+      <Box sx={{ 
+        background: '#000000',
+        color: 'white',
+        minHeight: '400px',
+        position: 'relative'
+      }}>
+        {/* Background Image */}
+        <Box 
+          component="img"
+          src={require("../assets/main1.jpeg")}
+          alt="Hero"
+          sx={{
+            width: '100%',
+            height: '350px',
+            objectFit: 'contain',
+            opacity: 0.6,
+            position: 'absolute',
+            top: 0,
+            left: 0
+          }}
+        />
 
-      <Container maxWidth="lg" sx={{ my: 8 }}>
-        <Typography variant="h3" align="center" gutterBottom>
-          Powerful Features for All Your Testing Needs
-        </Typography>
-        <Grid container spacing={4} sx={{ mt: 4 }}>
-          {features.map((feature) => (
-            <Grid item xs={12} sm={6} md={3} key={feature.title}>
-              <Paper elevation={3} sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <FeatureIcon>
+        {/* Content */}
+        
+      </Box>
+
+      {/* Vendor Features Section */}
+      <Box sx={{ 
+        background: '#000000',
+        py: 10
+      }}>
+        <Container maxWidth="xl">
+          <Typography variant="h2" align="center" sx={{ 
+            color: 'white',
+            mb: 2,
+            fontSize: { xs: '2rem', md: '2.5rem' }
+          }}>
+            Vendor Key Features
+          </Typography>
+          <Typography variant="h6" align="center" sx={{ 
+            color: 'rgba(255,255,255,0.8)',
+            mb: 6
+          }}>
+            Empowering Vendors with Seamless Examination Tools
+          </Typography>
+          <Grid container spacing={4}>
+            {vendorFeatures.map((feature, index) => (
+              <Grid item xs={12} md={4} key={index}>
+                <FeatureCard>
                   {feature.icon}
-                </FeatureIcon>
-                <Typography variant="h6" align="center" gutterBottom>
-                  {feature.title}
-                </Typography>
-                <Typography variant="body2" align="center">
-                  {feature.description}
-                </Typography>
-              </Paper>
-            </Grid>
-          ))}
-        </Grid>
-      </Container>
-
-      <Box sx={{ bgcolor: '#f0f4f8', py: 8 }}>
-        <Container maxWidth="lg">
-          <Grid container spacing={4} alignItems="center">
-            <Grid item xs={12} md={6}>
-              <Typography variant="h4" gutterBottom>
-                Why Choose Our Platform?
-              </Typography>
-              <List>
-                {[
-                  'Easy to use interface',
-                  'Multiple question types',
-                  'AI-powered proctoring',
-                  'Detailed analytics',
-                  'Customizable branding',
-                  'Multilingual support',
-                ].map((item, index) => (
-                  <ListItem key={index}>
-                    <ListItemIcon>
-                      <CheckCircleOutlineIcon color="primary" />
-                    </ListItemIcon>
-                    <ListItemText primary={item} />
-                  </ListItem>
-                ))}
-              </List>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              {/* Add an image or illustration here */}
-            </Grid>
+                  <Typography variant="h6" sx={{ 
+                    color: 'white',
+                    my: 2,
+                    fontWeight: 'bold'
+                  }}>
+                    {feature.title}
+                  </Typography>
+                  <Typography sx={{ color: 'rgba(255,255,255,0.8)' }}>
+                    {feature.description}
+                  </Typography>
+                </FeatureCard>
+              </Grid>
+            ))}
           </Grid>
         </Container>
       </Box>
 
-      <Box sx={{ bgcolor: '#e0f2f1', py: 4 }}>
-        <Container maxWidth="md">
-          <Typography variant="h5" align="center" gutterBottom>
-            Ready to get started?
+      {/* Security Features Section */}
+      <Box sx={{ 
+        background: '#050505',
+        py: 10
+      }}>
+        <Container maxWidth="xl">
+          <Typography variant="h2" align="center" sx={{ 
+            color: 'white',
+            mb: 6,
+            fontSize: { xs: '2rem', md: '2.5rem' }
+          }}>
+            Advanced Proctoring & Security
           </Typography>
-          <Typography variant="subtitle1" align="center" paragraph>
-            Join thousands of organizations using our platform for their testing needs.
-          </Typography>
-          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-            <Button variant="contained" color="primary" size="large" sx={{ mr: 2 }}>
-              Sign Up Free
-            </Button>
-            <Button variant="outlined" color="primary" size="large">
-              Request Demo
-            </Button>
+          <Grid container spacing={4}>
+            {securityFeatures.map((feature, index) => (
+              <Grid item xs={12} md={4} key={index}>
+                <FeatureCard>
+                  {feature.icon}
+                  <Typography variant="h6" sx={{ 
+                    color: 'white',
+                    my: 2,
+                    fontWeight: 'bold'
+                  }}>
+                    {feature.title}
+                  </Typography>
+                  <Typography sx={{ color: 'rgba(255,255,255,0.8)' }}>
+                    {feature.description}
+                  </Typography>
+                </FeatureCard>
+              </Grid>
+            ))}
+          </Grid>
+          <Box sx={{ textAlign: 'center', mt: 6 }}>
+            <GradientButton variant="contained" size="large">
+              Explore
+            </GradientButton>
           </Box>
         </Container>
       </Box>

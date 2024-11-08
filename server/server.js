@@ -63,7 +63,7 @@ app.use('/api/execute-code', executeCodeRoutes);
 app.use('/api/admin/mcq', mcqRoutes);
 app.use('/api/coding-challenges', codingChallengesRoutes);
 app.use('/api/admin', adminRoutes);
-app.use('/api/user', testRoutes);
+app.use('/api/users', testRoutes);
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 app.use((req, res, next) => {

@@ -102,13 +102,28 @@ exports.getUserDetails = async (req, res) => {
 
 exports.getTestById = async (req, res) => {
   try {
-    const test = await Test.findById(req.params.id);
+    const { id } = req.params;
+    
+    // Validate test ID
+    if (!id) {
+      return res.status(400).json({ message: 'Test ID is required' });
+    }
+
+    const test = await Test.findById(id)
+      .populate('mcqs')
+      .populate('codingChallenges');
+      
     if (!test) {
       return res.status(404).json({ message: 'Test not found' });
     }
+
     res.json(test);
   } catch (error) {
-    res.status(500).json({ error: 'Server error' });
+    console.error('Error in getTestById:', error);
+    res.status(500).json({ 
+      message: 'Error fetching test', 
+      error: error.message 
+    });
   }  
 };
 

@@ -2,11 +2,9 @@ const express = require('express');
 const router = express.Router();
 const testController = require('../controllers/testController');
 
-
-
 /**
  * @swagger
- * /api/users/tests/{id}/register:
+ * /tests/{id}/register:
  *   post:
  *     summary: Register for a test
  *     tags:

@@ -16,7 +16,7 @@ const testSchema = new Schema({
   },
   num_participants: {
     type: Number,
-    required: true
+    default: 0
   },
   duration: {
     type: Number,

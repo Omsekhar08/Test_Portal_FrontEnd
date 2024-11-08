@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Button, Typography, CircularProgress, Box, Paper, List, ListItem, ListItemText } from '@mui/material';
+import { Button, Typography, CircularProgress, Box, Paper, List, ListItem, ListItemText, Grid } from '@mui/material';
 import MCQSection from './MCQSection';
 import CodingChallengeSection from './CodingChallengeSection';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Proctoring from './Proctoring';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { apiHelper, endpoints } from '../../helpers';
 
 const TestPage = () => {
-  const [tests, setTests] = useState([]);
   const [selectedTest, setSelectedTest] = useState(null);
   const [testStarted, setTestStarted] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -20,45 +20,30 @@ const TestPage = () => {
   const [examStarted, setExamStarted] = useState(false);
   const [isProctoringActive, setIsProctoringActive] = useState(false);
   const warningCountRef = useRef(0);
-  const [testState, setTestState] = useState({
-    selectedTest: null,
-    testStarted: false,
-    isProctoringEnabled: false,
-    isProctoringSetup: false,
-    examStarted: false
-  });
   const navigate = useNavigate();
+  const { testId } = useParams();
+
   useEffect(() => {
-    const fetchTests = async () => {
+    const fetchTest = async () => {
       try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          throw new Error('No authentication token found');
+        if (!testId) {
+          setError('No test ID provided');
+          setLoading(false);
+          return;
         }
-        
-        const response = await axios.get('http://localhost:5000/api/users/test', {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        });
-        
-        console.log('API Response:', response.data);
-        setTests(response.data);
+
+        const response = await apiHelper.get(endpoints.tests.byId(testId));
+        setSelectedTest(response);
         setLoading(false);
       } catch (err) {
-        console.error('Error fetching tests:', err);
-        setError(`Failed to load tests. ${err.message}`);
+        console.error('Error fetching test:', err);
+        setError(err.message);
         setLoading(false);
       }
     };
 
-    fetchTests();
-  }, []);
-
-  const handleTestSelect = (test) => {
-    console.log('Test selected:', test);
-    navigate(`/test/${test._id}`);
-  };
+    fetchTest();
+  }, [testId]);
 
   const handleStartTest = () => {
     console.log('Starting test, proctoring:', selectedTest.proctoring);
@@ -70,13 +55,6 @@ const TestPage = () => {
       startExam();
     }
   };
-  const handleProctoringSetup = useCallback((isSetup) => {
-    setTestState(prevState => ({
-      ...prevState,
-      isProctoringSetup: isSetup,
-      examStarted: isSetup  
-    }));
-  }, []);
 
   const startExam = useCallback(() => {
     if (!examStarted) {
@@ -94,9 +72,14 @@ const TestPage = () => {
 
   const handleProctoringViolation = useCallback((violationType) => {
     console.log('Proctoring violation:', violationType);
+    warningCountRef.current += 1;
     toast.error(`Proctoring violation detected: ${violationType}`);
     
-  }, []);
+    if (warningCountRef.current >= 3) {
+      handleTestEnd('Test ended due to multiple violations');
+      navigate('/home');
+    }
+  }, [navigate]);
 
   const handleProctoringSetupComplete = useCallback((success) => {
     console.log('Proctoring setup complete:', success);
@@ -134,6 +117,12 @@ const TestPage = () => {
     toast.info(message);
   };
 
+  useEffect(() => {
+    if (selectedTest) {
+      console.log('MCQs:', selectedTest.mcqs);
+    }
+  }, [selectedTest]);
+
   if (loading) {
     return <CircularProgress />;
   }
@@ -142,94 +131,117 @@ const TestPage = () => {
     return <Typography color="error">{error}</Typography>;
   }
 
-  if (tests.length === 0) {
-    return <Typography>No tests available.</Typography>;
-  }
-
   console.log('Render state:', { selectedTest, testStarted, isProctoringEnabled, isProctoringSetup, examStarted });
 
   return (
     <Box sx={{ padding: 2 }}>
-      <Typography variant="h4" gutterBottom>Available Tests</Typography>
+      <Typography variant="h4" gutterBottom>Test Details</Typography>
       
-      {!selectedTest ? (
-        <List>
-          {tests.map((test) => (
-            <ListItem 
-              key={test._id} 
-              button 
-              onClick={() => handleTestSelect(test)}
-              component={Paper}
-              sx={{ mb: 2, '&:hover': { backgroundColor: '#f5f5f5' } }}
-            >
-              <ListItemText 
-                primary={test.name} 
-                secondary={`Duration: ${test.duration} minutes`} 
-              />
-            </ListItem>
-          ))}
-        </List>
-      ) : !examStarted ? (
+      {!examStarted ? (
         <>
-          <Box>
-            <Typography variant="h5">{selectedTest.name}</Typography>
-            <Typography variant="body1">{selectedTest.description}</Typography>
-            <Typography variant="body2">Duration: {selectedTest.duration} minutes</Typography>
-            <Typography variant="body2">Price: {selectedTest.price}</Typography>
-            <Typography variant="body2">Number Of Participants: {selectedTest.num_participants}</Typography>
-            {!isProctoringEnabled && (
-              <Button 
-                variant="contained" 
-                color="primary" 
-                onClick={handleStartTest}
-                sx={{ mt: 2 }}
-              >
-                Start Test
-              </Button>
-            )}
-          </Box>
+          {selectedTest && (
+            <Grid container spacing={3} sx={{ mt: 2 }}>
+              <Grid item xs={12}>
+                <Paper elevation={3} sx={{ p: 3, height: '100%' }}>
+                  <Typography variant="h5" gutterBottom>{selectedTest.name}</Typography>
+                  <Typography variant="body1" paragraph>{selectedTest.description}</Typography>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} sm={4}>
+                      <Paper elevation={2} sx={{ p: 2, height: '100px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                        <Typography variant="subtitle1">Duration</Typography>
+                        <Typography variant="h6">{selectedTest.duration} minutes</Typography>
+                      </Paper>
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                      <Paper elevation={2} sx={{ p: 2, height: '100px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                        <Typography variant="subtitle1">Price</Typography>
+                        <Typography variant="h6">{selectedTest.price}</Typography>
+                      </Paper>
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                      <Paper elevation={2} sx={{ p: 2, height: '100px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                        <Typography variant="subtitle1">Participants</Typography>
+                        <Typography variant="h6">{selectedTest.num_participants}</Typography>
+                      </Paper>
+                    </Grid>
+                  </Grid>
+                  {!isProctoringEnabled && (
+                    <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}>
+                      <Button 
+                        variant="contained" 
+                        color="primary" 
+                        size="large"
+                        onClick={handleStartTest}
+                      >
+                        Start Test
+                      </Button>
+                    </Box>
+                  )}
+                </Paper>
+              </Grid>
+            </Grid>
+          )}
           {isProctoringEnabled && (
-            <Proctoring 
-              isActive={true} 
-              isSetupMode={isProctoringSetup}
-              onAlert={handleProctoringAlert}
-              onSetupComplete={handleProctoringSetupComplete}
-            />
+            <Grid item xs={12} sx={{ mt: 3 }}>
+              <Paper elevation={3} sx={{ p: 3 }}>
+                <Typography variant="h6" gutterBottom>Proctoring Setup</Typography>
+                <Proctoring 
+                  isActive={true}
+                  isSetupMode={isProctoringSetup}
+                  onAlert={handleProctoringAlert}
+                  onSetupComplete={handleProctoringSetupComplete}
+                  onViolation={handleProctoringViolation}
+                  onEndTest={() => handleTestEnd('Test ended by proctor')}
+                />
+              </Paper>
+            </Grid>
           )}
         </>
       ) : (
         <>
           {isProctoringActive && (
-            <Box sx={{ position: 'fixed', top: 20, right: 20, zIndex: 1000 }}>
+            <Box sx={{ 
+              position: 'fixed', 
+              top: 20, 
+              right: 20, 
+              zIndex: 1000,
+              backgroundColor: 'rgba(255, 255, 255, 0.9)',
+              padding: 1,
+              borderRadius: 1,
+              boxShadow: 2
+            }}>
               <Proctoring 
-                isActive={isProctoringActive}
+                isActive={true}
                 onAlert={handleProctoringAlert}
-                onSetupComplete={handleProctoringSetupComplete}
                 onViolation={handleProctoringViolation}
+                onEndTest={() => handleTestEnd('Test ended by proctor')}
+                navigate={'/home'}
               />
             </Box>
           )}
           
-          {examStarted && (
-            <>
-              {currentSection === 'mcq' && selectedTest.mcqs && selectedTest.mcqs.length > 0 && (
-                <MCQSection 
-                  testId={selectedTest._id}
-                  mcqs={selectedTest.mcqs} 
-                  onComplete={handleSectionComplete}
-                />
-              )}
-              {currentSection === 'coding' && selectedTest.codingChallenges && selectedTest.codingChallenges.length > 0 && (
+          {examStarted && selectedTest && (
+            <Box sx={{ mt: 3 }}>
+              {currentSection === 'mcq' ? (
+                selectedTest?.mcqs && Array.isArray(selectedTest.mcqs) && selectedTest.mcqs.length > 0 ? (
+                  <MCQSection 
+                    testId={selectedTest._id}
+                    mcqs={selectedTest.mcqs} 
+                    onComplete={handleSectionComplete}
+                  />
+                ) : (
+                  <Typography variant="body1">No MCQ questions available for this test.</Typography>
+                )
+              ) : currentSection === 'coding' && selectedTest.codingChallenges && Array.isArray(selectedTest.codingChallenges) && selectedTest.codingChallenges.length > 0 ? (
                 <CodingChallengeSection 
                   testId={selectedTest._id}
                   challenges={selectedTest.codingChallenges} 
                   onAllChallengesCompleted={handleSectionComplete}
                 />
+              ) : (
+                <Typography variant="body1">No questions available for this section.</Typography>
               )}
-              {currentSection === 'coding' && (!selectedTest.codingChallenges || selectedTest.codingChallenges.length === 0) && (
-                <Typography>No coding challenges available for this test.</Typography>
-              )}
-            </>
+            </Box>
           )}
         </>
       )}

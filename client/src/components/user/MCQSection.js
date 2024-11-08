@@ -91,7 +91,9 @@ const MCQSection = ({ testId, mcqs, onComplete }) => {
     );
   }
 
-  if (mcqs.length === 0) return <Typography>No MCQs available for this hackathon.</Typography>;
+  if (!mcqs || !Array.isArray(mcqs) || mcqs.length === 0) {
+    return <Typography>No MCQ questions available</Typography>;
+  }
 
   const currentQuestion = mcqs[currentMcq];
 

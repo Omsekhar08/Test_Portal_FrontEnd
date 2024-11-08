@@ -8,7 +8,7 @@ const UserManager = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('/api/admin/users');
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/admin/users`);
         setUsers(response.data);
       } catch (error) {
         console.error('Error fetching users:', error);

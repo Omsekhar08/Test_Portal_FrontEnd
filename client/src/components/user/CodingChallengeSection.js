@@ -33,7 +33,7 @@ const CodingChallengeSection = ({ testId, challenges, onAllChallengesCompleted }
   const [testResults, setTestResults] = useState([]);
   const [runningTestCase, setRunningTestCase] = useState(null);
   const editorRef = useRef(null);
-  const [showTestResults, setShowTestResults] = useState(false);
+  const [showTestResults, setShowTestResults] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(true);
   const alertCountRef = useRef(0);
   const theme = useTheme();
@@ -85,11 +85,14 @@ const CodingChallengeSection = ({ testId, challenges, onAllChallengesCompleted }
     const fetchChallengeDetails = async () => {
       if (challenge && challenge._id) {
         try {
-          const response = await axios.get(`http://localhost:5000/api/coding-challenges/${challenge._id}`, {
-            headers: {
-              'Authorization': `Bearer ${token}`
+          const response = await axios.get(
+            `${process.env.REACT_APP_API_URL}/api/coding-challenges/${challenge._id}`, 
+            {
+              headers: {
+                'Authorization': `Bearer ${token}`
+              }
             }
-          });
+          );
           console.log('Challenge details:', response.data);
           setChallenge(response.data);
         } catch (error) {
@@ -227,12 +230,16 @@ const CodingChallengeSection = ({ testId, challenges, onAllChallengesCompleted }
       console.log('Submitting with token:', token);
       console.log('Submitting challenge:', challenge._id);
 
-      const response = await axios.post(`http://localhost:5000/api/coding-challenges/${challenge._id}/submit`, submissionData, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/api/coding-challenges/${challenge._id}/submit`, 
+        submissionData, 
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
         }
-      });
+      );
 
       console.log('Submission response:', response.data);
 
@@ -396,84 +403,106 @@ const CodingChallengeSection = ({ testId, challenges, onAllChallengesCompleted }
             </IconButton>
           </Box>
         </Box>
-        <AceEditor
-          key={editorKey}
-          onLoad={handleEditorLoad}
-          mode={languageToMode[selectedLanguage] || 'text'}
-          theme={isDarkMode ? 'tomorrow_night_eighties' : 'tomorrow'}
-          name="code-editor"
-          value={userCode}
-          onChange={(newCode) => setUserCode(newCode)}
-          width="100%"
-          height={isMobile || isTablet ? "400px" : "100%"}
-          editorProps={{ $blockScrolling: true }}
-          fontSize={14}
-          showPrintMargin={false}
-          highlightActiveLine={true}
-          setOptions={{
-            enableBasicAutocompletion: true,
-            enableLiveAutocompletion: true,
-            enableSnippets: true,
-            showLineNumbers: true,
-            tabSize: 2,
-            useWorker: false,
-          }}
-          style={{display:'flex'}}
-        />
-        <Box 
-          sx={{ 
-            width: isMobile || isTablet ? '100%' : (showTestResults ? '40%' : '0%'), 
-            overflow: 'hidden',
-            transition: 'width 0.3s, height 0.3s',
-            position: 'relative',
-            height: isMobile || isTablet ? (showTestResults ? '300px' : '40px') : '100%',
-          }}
-        >
-          <IconButton 
-            onClick={toggleTestResults}
-            sx={{ 
-              position: 'absolute', 
-              left: '-20px', 
-              top: '50%', 
+
+        {/* Editor and Test Results container */}
+        <Box sx={{ 
+          display: 'flex',
+          flexDirection: 'row',
+          gap: 2,
+          flex: 1,
+          height: 'calc(100% - 60px)',
+          position: 'relative',
+        }}>
+          {/* Code Editor */}
+          <Box sx={{ 
+            flex: showTestResults ? '60%' : '100%',
+            height: '100%',
+            transition: 'flex 0.3s ease'
+          }}>
+            <AceEditor
+              key={editorKey}
+              onLoad={handleEditorLoad}
+              mode={languageToMode[selectedLanguage] || 'text'}
+              theme={isDarkMode ? 'tomorrow_night_eighties' : 'tomorrow'}
+              name="code-editor"
+              value={userCode}
+              onChange={(newCode) => setUserCode(newCode)}
+              width="100%"
+              height="100%"
+              editorProps={{ $blockScrolling: true }}
+              fontSize={14}
+              showPrintMargin={false}
+              highlightActiveLine={true}
+              setOptions={{
+                enableBasicAutocompletion: true,
+                enableLiveAutocompletion: true,
+                enableSnippets: true,
+                showLineNumbers: true,
+                tabSize: 2,
+                useWorker: false,
+              }}
+            />
+          </Box>
+
+          {/* Toggle Arrow Button */}
+          <IconButton
+            onClick={() => setShowTestResults(!showTestResults)}
+            sx={{
+              position: 'absolute',
+              right: showTestResults ? '40%' : 0,
+              top: '50%',
               transform: 'translateY(-50%)',
               zIndex: 1,
-              bgcolor: isDarkMode ? 'white' : '#f5f5f5',
-              '&:hover': { bgcolor: isDarkMode ? '#f0f0f0' : '#e0e0e0' },
+              bgcolor: isDarkMode ? '#1e1e1e' : '#f5f5f5',
+              '&:hover': {
+                bgcolor: isDarkMode ? '#2d2d2d' : '#e0e0e0',
+              },
+              transition: 'right 0.3s ease'
             }}
           >
             {showTestResults ? <ArrowForwardIosIcon /> : <ArrowBackIosIcon />}
           </IconButton>
-          <Box sx={{ ml: 2, height: '100%', display: 'flex', flexDirection: 'column' }}>
-            <Box sx={{ flex: 1, bgcolor: isDarkMode ? '#042240' : '#f5f5f5', color: isDarkMode ? 'white' : 'black', p: 2, overflowY: 'auto', borderRadius: 2, mb: 2 }}>
-              <Typography variant="h6" gutterBottom>Test Results</Typography>
-              {testResults.length > 0 ? (
-                testResults.map((result, index) => (
-                  <Box key={index} sx={{ mb: 2, p: 1, bgcolor: isDarkMode ? 'rgba(255,255,255,0.1)' : '#f0f0f0', borderRadius: 1 }}>
-                    {runningTestCase === index ? (
-                      <CircularProgress size={20} sx={{ mr: 1 }} />
-                    ) : result.passed ? (
-                      <CheckCircleIcon color="success" sx={{ mr: 1 }} />
-                    ) : (
-                      <CancelIcon color="error" sx={{ mr: 1 }} />
-                    )}
-                      <Typography variant="body2" sx={{ fontWeight: 'bold' }}>Test Case {index + 1}</Typography>
-                      <Typography variant="body2">Input: {result.input}</Typography>
-                      <Typography variant="body2">Expected Output: {result.expectedOutput}</Typography>
-                      <Typography variant="body2">Actual Output: {result.actualOutput}</Typography>
-                      <Typography variant="body2">Time: {result.time}</Typography>
-                      <Typography variant="body2">Memory: {result.memory}</Typography>
-                      <Typography variant="body2" sx={{ color: result.passed ? 'green' : 'red' }}>
-                        {result.passed ? 'Passed' : 'Failed'}
-                      </Typography>
-                  </Box>
-                ))
-              ) : (
-                <Typography variant="body2">No test cases run yet.</Typography>
-              )}
-            </Box>
+
+          {/* Test Results */}
+          <Box sx={{ 
+            flex: '40%',
+            bgcolor: isDarkMode ? '#042240' : '#f5f5f5',
+            color: isDarkMode ? 'white' : 'black',
+            p: 2,
+            borderRadius: 2,
+            overflowY: 'auto',
+            height: '100%',
+            display: showTestResults ? 'block' : 'none',
+            transition: 'all 0.3s ease'
+          }}>
+            <Typography variant="h6" gutterBottom>Test Results</Typography>
+            {testResults.length > 0 ? (
+              testResults.map((result, index) => (
+                <Box key={index} sx={{ mb: 2, p: 1, bgcolor: isDarkMode ? 'rgba(255,255,255,0.1)' : '#f0f0f0', borderRadius: 1 }}>
+                  {runningTestCase === index ? (
+                    <CircularProgress size={20} sx={{ mr: 1 }} />
+                  ) : result.passed ? (
+                    <CheckCircleIcon color="success" sx={{ mr: 1 }} />
+                  ) : (
+                    <CancelIcon color="error" sx={{ mr: 1 }} />
+                  )}
+                    <Typography variant="body2" sx={{ fontWeight: 'bold' }}>Test Case {index + 1}</Typography>
+                    <Typography variant="body2">Input: {result.input}</Typography>
+                    <Typography variant="body2">Expected Output: {result.expectedOutput}</Typography>
+                    <Typography variant="body2">Actual Output: {result.actualOutput}</Typography>
+                    <Typography variant="body2">Time: {result.time}</Typography>
+                    <Typography variant="body2">Memory: {result.memory}</Typography>
+                    <Typography variant="body2" sx={{ color: result.passed ? 'green' : 'red' }}>
+                      {result.passed ? 'Passed' : 'Failed'}
+                    </Typography>
+                </Box>
+              ))
+            ) : (
+              <Typography variant="body2">No test cases run yet.</Typography>
+            )}
           </Box>
         </Box>
-        
+
         {challenge?.proctoring && <Proctoring onAlert={handleAlert} />}
         <ToastContainer />
       </Box>

@@ -23,7 +23,7 @@ const AdminDashboard = () => {
 
   const fetchTests = async () => {
     try {
-      const response = await axios.get('/api/admin/tests', {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/admin/tests`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setTests(response.data);
@@ -38,9 +38,13 @@ const AdminDashboard = () => {
 
   const handleMCQSubmit = async (mcqs) => {
     try {
-      const response = await axios.post(`/api/admin/tests/${currentTestId}/mcq`, { mcqs }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/api/admin/tests/${currentTestId}/mcq`, 
+        { mcqs }, 
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
       setNewTest(prev => ({
         ...prev,
         mcqQuestions: [...prev.mcqQuestions, ...response.data]
@@ -60,9 +64,13 @@ const AdminDashboard = () => {
 
   const handleSaveTest = async () => {
     try {
-      const response = await axios.post('/api/admin/tests', newTest, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/api/admin/tests`, 
+        newTest, 
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
       const savedTest = response.data;
       setTests(prev => [...prev, savedTest]);
       setShowAddTestForm(false);
@@ -74,9 +82,13 @@ const AdminDashboard = () => {
 
   const handleUpdateTest = async () => {
     try {
-      await axios.put(`/api/admin/tests/${editingTest._id}`, editingTest, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await axios.put(
+        `${process.env.REACT_APP_API_URL}/api/admin/tests/${editingTest._id}`, 
+        editingTest, 
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
       setEditingTest(null);
       fetchTests();
     } catch (error) {
@@ -86,7 +98,7 @@ const AdminDashboard = () => {
 
   const handleDeleteTest = async (id) => {
     try {
-      await axios.delete(`/api/admin/tests/${id}`, {
+      await axios.delete(`${process.env.REACT_APP_API_URL}/api/admin/tests/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchTests();
