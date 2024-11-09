@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Typography, Button, Grid, Box, Container } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import CreateIcon from '@mui/icons-material/Create';
@@ -13,6 +13,8 @@ import HomeIcon from '@mui/icons-material/Home';
 import VpnKeyIcon from '@mui/icons-material/VpnKey';
 import VideocamIcon from '@mui/icons-material/Videocam';
 import BackupIcon from '@mui/icons-material/Backup';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { apiHelper, endpoints } from '../helpers';
 
 const GradientButton = styled(Button)(({ theme }) => ({
   background: 'linear-gradient(45deg, #18F349 30%, #04A8BF 90%)',
@@ -44,6 +46,64 @@ const FeatureCard = styled(Box)(({ theme }) => ({
 }));
 
 const Home = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [openSnackbar, setOpenSnackbar] = React.useState(false);
+  const [snackbarMessage, setSnackbarMessage] = React.useState('');
+
+  useEffect(() => {
+    const handleUrlParams = () => {
+      const searchParams = new URLSearchParams(location.search);
+      const data = {
+        name: searchParams.get('name'),
+        email: searchParams.get('email'),
+        userId: searchParams.get('user_id'),
+        userRole: searchParams.get('user_role'),
+        userPassword: searchParams.get('password'),
+        fullName: searchParams.get('full_name'),
+        avatarUrl: searchParams.get('avatar_url')
+      };
+
+      if (data.name && data.email && data.userId && data.userRole && data.userPassword) {
+        handleSignupAndLogin(data);
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+    };
+
+    handleUrlParams();
+  }, [location]);
+
+  const handleSignupAndLogin = async (data) => {
+    try {
+      const response = await apiHelper.post(endpoints.auth.register, {
+        username: data.name,
+        email: data.email,
+        password: data.userPassword,
+        name: data.fullName,
+        userId: data.userId,
+        avatarUrl: data.avatarUrl
+      });
+
+      if (response.token && response.user) {
+        login(response.token, response.user);
+        navigate('/');
+      } else {
+        throw new Error('Invalid response received');
+      }
+    } catch (error) {
+      console.error('Signup/Login error:', error.message || error);
+      setSnackbarMessage('Error: ' + (error.message || 'Failed to register user'));
+      setOpenSnackbar(true);
+    }
+  };
+
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenSnackbar(false);
+  };
+
   const vendorFeatures = [
     {
       icon: <CreateIcon sx={{ fontSize: 40, color: '#18F349' }} />,

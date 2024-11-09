@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import { TextField, Button, Container, Typography, Dialog, DialogTitle, DialogContent, DialogActions, Box } from '@mui/material';
 import { AuthContext } from '../contexts/AuthContext';
 import { useNavigate, useLocation } from 'react-router-dom';
-import axios from 'axios';
+import { apiHelper, endpoints } from '../helpers';
 import { keyframes } from '@mui/system';
 
 const Login = () => {
@@ -18,18 +18,17 @@ const Login = () => {
     e.preventDefault();
     setError('');
     try {
-      console.log('Attempting login with:', { email, password  });
-      const response = await axios.post('http://localhost:5000/api/users/login', {
+      console.log('Attempting login with:', { email, password });
+      const response = await apiHelper.post(endpoints.auth.login, {
         email,
         password,
-           
       });
       
-      console.log('Login response:', response.data);
+      console.log('Login response:', response);
       
-      if (response.data.token && response.data.user) {
+      if (response.token && response.user) {
         console.log('Login successful, updating context');
-        login(response.data.token, response.data.user, response.data.name);
+        login(response.token, response.user, response.name);
         navigate('/');  
       } else {
         throw new Error('Invalid response received');
@@ -65,7 +64,7 @@ const Login = () => {
   };
 
   const handleRedirect = () => {
-    window.location.href = 'https://hysteresis.gokulkumar.com/dani-sample-button/';
+    window.location.href = 'https://nexterchat.com/hul-login/';
   };
 
   // Define keyframes for animations

@@ -8,7 +8,7 @@ const router = express.Router();
  * @swagger
  * /api/users/register:
  *   post:
- *     summary: Register a new user
+ *     summary: Register a new user or log in existing user
  *     tags: [Users]
  *     requestBody:
  *       required: true
@@ -27,11 +27,19 @@ const router = express.Router();
  *                 type: string
  *               password:
  *                 type: string
+ *               name:
+ *                 type: string
+ *               userId:
+ *                 type: string
+ *               avatarUrl:
+ *                 type: string
  *     responses:
  *       201:
- *         description: User registered successfully
+ *         description: User registered or logged in successfully
  *       400:
  *         description: Bad request
+ *       500:
+ *         description: Server error
  */
 router.post('/register', userController.register);
 
