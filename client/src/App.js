@@ -23,7 +23,7 @@ import Home from './pages/Home';
 import Proctoring from './components/user/Proctoring';
 import UserDetailsForm from './pages/UserDetailsForm';
 import OnlineProctoring from './pages/OnlineProctoring';
-
+import Signup from './pages/Signup';
 
 // Create a theme instance
 const theme = createTheme({
@@ -57,17 +57,19 @@ const App = () => {
               <Container 
                 maxWidth="lg" 
                 sx={{ 
-                  py: 4 // Adds vertical padding to the container
+                  py: 4  
                 }}
               >
                 <Routes>
                   <Route path="/" element={<Home />} />
+                  <Route path="/home" element={<Home />} />
                   <Route path="/admin" element={<AdminDashboard />} />
                   <Route path="/admin/tests" element={<TestManager />} />
                   <Route path="/admin/users" element={<UserManager />} />
                   <Route path="/admin/mcq" element={<MCQManager />} />
                   <Route path="/admin/coding" element={<CodingChallengeManager />} />
                   <Route path="/login" element={<Login />} />
+                  <Route path ="/signup" element={<Signup />} />
              
                   <Route path="/mcq" element={<MCQSection hackathonId="dummy-id" mcqs={[]} />} />
                   <Route path="/coding" element={<CodingChallengeSection hackathonId="dummy-id" challenges={[]} />} />

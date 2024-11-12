@@ -15,6 +15,8 @@ import VideocamIcon from '@mui/icons-material/Videocam';
 import BackupIcon from '@mui/icons-material/Backup';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { apiHelper, endpoints } from '../helpers';
+import { RetroGrid } from '../components/ui/RetroGrid';
+import '../App.css';
 
 const GradientButton = styled(Button)(({ theme }) => ({
   background: 'linear-gradient(45deg, #18F349 30%, #04A8BF 90%)',
@@ -29,20 +31,17 @@ const GradientButton = styled(Button)(({ theme }) => ({
 }));
 
 const FeatureCard = styled(Box)(({ theme }) => ({
-  padding: theme.spacing(4),
-  textAlign: 'center',
+  boxSizing: 'border-box',
+  padding: '20px',
+  border: '1px solid rgba(255, 255, 255, 0.3)',
+  borderRadius: '20px',
+  background: 'rgba(255, 255, 255, 0.05)',
+  backdropFilter: 'blur(10px)',
   height: '100%',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  backgroundColor: 'rgba(255, 255, 255, 0.05)',
-  borderRadius: '15px',
-  border: '1px solid rgba(255, 255, 255, 0.1)',
-  transition: 'transform 0.3s ease-in-out',
-  '&:hover': {
-    transform: 'translateY(-5px)',
-    boxShadow: '0 5px 15px rgba(0,0,0,0.3)',
-  }
+  textAlign: 'center'
 }));
 
 const Home = () => {
@@ -171,13 +170,13 @@ const Home = () => {
   ];
 
   return (
-    <>
+    <Box sx={{ padding: '10px' }}>
       {/* Hero Section */}
       <Box sx={{ 
-        background: '#000000',
-        color: 'white',
-        minHeight: '400px',
-        position: 'relative'
+        background: '#000',
+        minHeight: '430px',
+        position: 'relative',
+        zIndex: 2
       }}>
         {/* Background Image */}
         <Box 
@@ -186,7 +185,7 @@ const Home = () => {
           alt="Hero"
           sx={{
             width: '100%',
-            height: '350px',
+            height: '100%',
             objectFit: 'contain',
             opacity: 0.6,
             position: 'absolute',
@@ -194,58 +193,213 @@ const Home = () => {
             left: 0
           }}
         />
-
-        {/* Content */}
         
+        {/* Hero Content */}
+        <Container maxWidth="lg" sx={{ 
+          position: 'relative',
+          pt: 8, 
+          pb: 6,
+          zIndex: 3
+        }}>
+         
+        </Container>
+        
+      </Box>
+
+      <Box sx={{ background: '#000', py: 8, position: 'relative', zIndex: 1, mt: '-1px' }}>
+        <Container maxWidth="lg">
+          <Typography
+            variant="h1"
+            align="center"
+            sx={{
+              fontSize: { xs: '2.5rem', md: '4rem' },
+              fontWeight: 500,
+              color: '#FFFFFF',
+              mb: 2,
+              '& .highlight': {
+                color: '#18F349',
+                textDecoration: 'underline',
+              }
+            }}
+          >
+            Create online <span className="highlight">tests</span>, <span className="highlight">quizzes</span> and <span className="highlight">exams</span>
+          </Typography>
+          
+          <Typography
+            variant="h5"
+            align="center"
+            sx={{
+              color: '#919191',
+              maxWidth: '800px',
+              mx: 'auto',
+              mb: 4,
+              fontSize: { xs: '1.2rem', md: '1.5rem' },
+              lineHeight: 1.5
+            }}
+          >
+            We helped these great brands write their success stories. Join them now. Choose professional online assessment tool.
+          </Typography>
+        </Container>
       </Box>
 
       {/* Vendor Features Section */}
       <Box sx={{ 
-        background: '#000000',
-        py: 10
+        background: 'linear-gradient(to bottom, #000000, #001a1a)',  // Dark gradient background
+        py: 10,
+        minHeight: '765px',
+        position: 'relative',
+        overflow: 'hidden'
       }}>
-        <Container maxWidth="xl">
-          <Typography variant="h2" align="center" sx={{ 
-            color: 'white',
-            mb: 2,
-            fontSize: { xs: '2rem', md: '2.5rem' }
-          }}>
+        {/* Glow effect */}
+        <Box sx={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'radial-gradient(circle at 50% 50%, rgba(24, 243, 73, 0.1), transparent 70%)',
+          zIndex: 1
+        }} />
+
+        {/* RetroGrid */}
+        <RetroGrid />
+        
+        {/* Content Container */}
+        <Container maxWidth="lg" sx={{ 
+          position: 'relative', 
+          zIndex: 2
+        }}>
+          {/* Section Title */}
+          <Typography 
+            variant="h2" 
+            align="center" 
+            sx={{ 
+              color: '#FFFFFF',
+              fontSize: '40px',
+              fontWeight: 500,
+              lineHeight: '150.35%',
+              mb: 1
+            }}
+          >
             Vendor Key Features
           </Typography>
-          <Typography variant="h6" align="center" sx={{ 
-            color: 'rgba(255,255,255,0.8)',
-            mb: 6
-          }}>
+
+          {/* Section Subtitle */}
+          <Typography 
+            variant="h6" 
+            align="center" 
+            sx={{ 
+              color: '#EBE6E6',
+              fontSize: '20px',
+              fontWeight: 500,
+              lineHeight: '150.35%',
+              mb: 8
+            }}
+          >
             Empowering Vendors with Seamless Examination Tools
           </Typography>
-          <Grid container spacing={4}>
-            {vendorFeatures.map((feature, index) => (
+
+          {/* Features Grid */}
+          <Grid container spacing={2.5} sx={{ mb: 8 }}>
+            {[
+              {
+                icon: <CreateIcon sx={{ fontSize: 40, color: '#FFFFFF' }} />,
+                title: "Custom exam Creation",
+                description: "Vendors can create exams with customizable question formats, including multiple-choice, essay, and drag-and-drop."
+              },
+              {
+                icon: <MonitorIcon sx={{ fontSize: 40, color: '#FFFFFF' }} />,
+                title: "AI-Powered Procturing",
+                description: "Real-time monitoring using AI algorithms to detect suspicious behavior and ensure exam integrity."
+              },
+              {
+                icon: <GradingIcon sx={{ fontSize: 40, color: '#FFFFFF' }} />,
+                title: "Automated Grading",
+                description: "Automatic grading of multiple-choice and objective-type questions with immediate result generation."
+              },
+              {
+                icon: <ScheduleIcon sx={{ fontSize: 40, color: '#FFFFFF' }} />,
+                title: "Exam Scheduling",
+                description: "Vendors can schedule exams, set time limits, and automate reminders for upcoming exams."
+              },
+              {
+                icon: <WorkspacePremiumIcon sx={{ fontSize: 40, color: '#FFFFFF' }} />,
+                title: "Instant certification",
+                description: "Automatically issue certificates to candidates upon successful completion of the exam."
+              },
+              {
+                icon: <DashboardIcon sx={{ fontSize: 40, color: '#FFFFFF' }} />,
+                title: "Vendor dashboard",
+                description: "A comprehensive dashboard that provides an overview of all exams, candidates, and performance metrics."
+              }
+            ].map((feature, index) => (
               <Grid item xs={12} md={4} key={index}>
                 <FeatureCard>
-                  {feature.icon}
-                  <Typography variant="h6" sx={{ 
-                    color: 'white',
-                    my: 2,
-                    fontWeight: 'bold'
-                  }}>
+                  <Box sx={{ mb: 2 }}>
+                    {feature.icon}
+                  </Box>
+                  <Typography 
+                    variant="h6" 
+                    sx={{ 
+                      color: '#FFFFFF',
+                      fontSize: '25px',
+                      fontWeight: 500,
+                      lineHeight: '150.35%',
+                      mb: 2,
+                      textAlign: 'center'
+                    }}
+                  >
                     {feature.title}
                   </Typography>
-                  <Typography sx={{ color: 'rgba(255,255,255,0.8)' }}>
+                  <Typography 
+                    sx={{ 
+                      color: '#FFFFFF',
+                      fontSize: '18px',
+                      fontWeight: 500,
+                      lineHeight: '150.35%',
+                      textAlign: 'center'
+                    }}
+                  >
                     {feature.description}
                   </Typography>
                 </FeatureCard>
               </Grid>
             ))}
           </Grid>
+
+          {/* Explore Button */}
+          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Button
+              variant="outlined"
+              sx={{
+                border: '3px solid #00AF27',
+                borderRadius: '7px',
+                padding: '12px 29px',
+                gap: '23px',
+                color: '#FFFFFF',
+                fontSize: '30px',
+                fontWeight: 500,
+                lineHeight: '150.35%',
+                textTransform: 'none',
+                '&:hover': {
+                  border: '3px solid #00AF27',
+                  background: 'rgba(0, 175, 39, 0.1)'
+                }
+              }}
+            >
+              Explore
+              
+            </Button>
+          </Box>
         </Container>
       </Box>
 
       {/* Security Features Section */}
       <Box sx={{ 
         background: '#050505',
-        py: 10
+        py: 10,
       }}>
-        <Container maxWidth="xl">
+        <Container maxWidth={false} disableGutters sx={{ width: '100%' }}>
           <Typography variant="h2" align="center" sx={{ 
             color: 'white',
             mb: 6,
@@ -279,7 +433,7 @@ const Home = () => {
           </Box>
         </Container>
       </Box>
-    </>
+    </Box>
   );
 };
 

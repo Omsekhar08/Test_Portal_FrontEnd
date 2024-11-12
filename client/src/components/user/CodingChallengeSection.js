@@ -231,7 +231,7 @@ const CodingChallengeSection = ({ testId, challenges, onAllChallengesCompleted }
       console.log('Submitting challenge:', challenge._id);
 
       const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/coding-challenges/${challenge._id}/submit`, 
+        `/api/coding-challenges/${challenge._id}/submit`, 
         submissionData, 
         {
           headers: {

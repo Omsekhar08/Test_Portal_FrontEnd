@@ -8,6 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Proctoring from './Proctoring';
 import { useNavigate, useParams } from 'react-router-dom';
 import { apiHelper, endpoints } from '../../helpers';
+import useExamSecurity from '../../hooks/useExamSecurity';
 
 const TestPage = () => {
   const [selectedTest, setSelectedTest] = useState(null);
@@ -22,6 +23,14 @@ const TestPage = () => {
   const warningCountRef = useRef(0);
   const navigate = useNavigate();
   const { testId } = useParams();
+
+  // Add exam security
+  const { enterFullscreen } = useExamSecurity({
+    enabled: examStarted,
+    onViolation: (message) => {
+      handleProctoringViolation(message);
+    }
+  });
 
   useEffect(() => {
     const fetchTest = async () => {
@@ -45,6 +54,7 @@ const TestPage = () => {
     fetchTest();
   }, [testId]);
 
+  // Modify handleStartTest to include fullscreen
   const handleStartTest = () => {
     console.log('Starting test, proctoring:', selectedTest.proctoring);
     if (selectedTest.proctoring && !isProctoringActive) {
@@ -56,14 +66,15 @@ const TestPage = () => {
     }
   };
 
+  // Modify startExam to check security status
   const startExam = useCallback(() => {
     if (!examStarted) {
-      console.log('Exam started');
+      enterFullscreen(); // Enter fullscreen mode
       setTestStarted(true);
       setExamStarted(true);
       toast.success('Exam started. Good luck!', { toastId: 'exam-start' });
     }
-  }, [examStarted]);
+  }, [examStarted, enterFullscreen]);
 
   const handleProctoringAlert = useCallback((message) => {
     console.log('Proctoring alert:', message);

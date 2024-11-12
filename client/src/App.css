@@ -1,4 +1,3 @@
-
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
@@ -63,3 +62,57 @@
   opacity: 0;
   animation: pullUp 0.5s ease forwards;
 }
+
+@media (min-width: 1200px) {
+  .css-1sqq6so-MuiContainer-root {
+    max-width: 100% !important;
+  }
+}
+
+@media (min-width: 600px) {
+  .css-1sqq6so-MuiContainer-root {
+      padding-left: 0px !important;
+      padding-right: 0px !important;
+  }
+}
+.css-1sqq6so-MuiContainer-root{
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
+}
+
+.css-17afkmn{
+  padding-bottom: 20px !important;
+}
+
+ 
+
+.animate-grid {
+  animation: grid 20s linear infinite;
+} 
+
+
+@keyframes grid {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}
+@keyframes grid {
+  0% {
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(405deg);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+} 

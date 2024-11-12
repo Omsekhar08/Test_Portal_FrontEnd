@@ -26,7 +26,7 @@ const Proctoring = ({
   const mobileDetectionHistory = useRef([]);
   const historyLength = 3;
   const warningCountRef = useRef(0);
-  const maxWarnings = 5;
+  const maxWarnings = 9;
   const navigate = useNavigate();
   const lastWarningMessage = useRef('');
 
