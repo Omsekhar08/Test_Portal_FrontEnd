@@ -141,6 +141,11 @@ export const endpoints = {
     mcq: '/admin/mcq',
     codingChallenges: '/coding-challenges',
     users: '/admin/users',
+  },
+  vendor: {
+    tests: '/vendor/tests',
+    testById: (id) => `/vendor/tests/${id}`,
+    vendorTests: (vendorId) => `/vendor/tests/${vendorId}`,
   }
 };
 

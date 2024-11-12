@@ -24,7 +24,7 @@ import Proctoring from './components/user/Proctoring';
 import UserDetailsForm from './pages/UserDetailsForm';
 import OnlineProctoring from './pages/OnlineProctoring';
 import Signup from './pages/Signup';
-
+import VendorDashboard from './components/vendor/vendorDashboard';
 // Create a theme instance
 const theme = createTheme({
   // You can customize your theme here
@@ -80,6 +80,7 @@ const App = () => {
                   <Route path="/proctoring" element={<Proctoring />} />
                   <Route path="/online-proctoring" element={<OnlineProctoring />} />
                   <Route path="/profile" element={<UserDetailsForm />} />
+                  <Route path="/vendor" element={<VendorDashboard />} />
                 </Routes>
               </Container>
             </Box>
